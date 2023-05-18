@@ -44,17 +44,23 @@ esp_matter_export_main() {
             script_dir="$(dirname "${script_name}")"
         fi
         export ESP_MATTER_PATH="${script_dir}"
-        echo "Setting ESP_MATTER_PATH to '${ESP_MATTER_PATH}'"
     fi
+
+    echo export ESP_MATTER_PATH="${ESP_MATTER_PATH}" >> ../.envrc
+    echo "Setting ESP_MATTER_PATH to '${ESP_MATTER_PATH}'"
 
     # PATH for gn
     export PATH=${PATH}:${ESP_MATTER_PATH}/connectedhomeip/connectedhomeip/.environment/cipd/packages/pigweed/
+    echo PATH_add ${ESP_MATTER_PATH}/connectedhomeip/connectedhomeip/.environment/cipd/packages/pigweed/ >> ../.envrc
 
     # PATH for host tools
     export PATH=${PATH}:${ESP_MATTER_PATH}/connectedhomeip/connectedhomeip/out/host
+    echo PATH_add ${ESP_MATTER_PATH}/connectedhomeip/connectedhomeip/out/host >> ../.envrc
 
     # export zap-cli path
     export ZAP_INSTALL_PATH=${ESP_MATTER_PATH}/connectedhomeip/connectedhomeip/.environment/cipd/packages/zap
+    echo export ZAP_INSTALL_PATH=${ESP_MATTER_PATH}/connectedhomeip/connectedhomeip/.environment/cipd/packages/zap >> ../.envrc
+    direnv allow
 }
 
 esp_matter_export_main
