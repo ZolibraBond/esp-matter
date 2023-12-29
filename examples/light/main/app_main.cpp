@@ -9,9 +9,14 @@
 #include <esp_err.h>
 #include <esp_log.h>
 #include <nvs_flash.h>
+#if CONFIG_PM_ENABLE
+#include <esp_pm.h>
+#endif
 
 #include <esp_matter.h>
+#if CONFIG_ENABLE_CHIP_SHELL
 #include <esp_matter_console.h>
+#endif
 #include <esp_matter_ota.h>
 
 #include <app_priv.h>
@@ -148,6 +153,17 @@ extern "C" void app_main()
     app_driver_handle_t light_handle = app_driver_light_init();
     app_driver_handle_t button_handle = app_driver_button_init();
     app_reset_button_register(button_handle);
+
+    #if CONFIG_PM_ENABLE
+        esp_pm_config_t pm_config = {
+            .max_freq_mhz = CONFIG_ESP_DEFAULT_CPU_FREQ_MHZ,
+            .min_freq_mhz = CONFIG_ESP_DEFAULT_CPU_FREQ_MHZ,
+    #if CONFIG_FREERTOS_USE_TICKLESS_IDLE
+            .light_sleep_enable = true
+    #endif
+        };
+        err = esp_pm_configure(&pm_config);
+    #endif
 
     /* Create a Matter node and add the mandatory Root Node device type on endpoint 0 */
     node::config_t node_config;
